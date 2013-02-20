@@ -7,6 +7,6 @@ foreach (array('a', 'e', 'i', 'o', 'u') as $i) {
     $id_data = json_decode($id_json);
 
     if ($id_data->success) {
-        file_put_contents('searches/json/'.$i.'.json', $id_json);
+        file_put_contents('json/searches/'.$i.'.json', $id_json);
     }
 }

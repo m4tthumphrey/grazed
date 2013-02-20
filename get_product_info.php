@@ -3,7 +3,7 @@
 require 'lib.php';
 
 $product_ids = array();
-foreach (range('a', 'z') as $i) {
+foreach (array('a', 'e', 'i', 'o', 'u') as $i) {
     $id_json = file_get_contents('json/searches/'.$i.'.json');
     $id_data = json_decode($id_json);
 
