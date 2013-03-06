@@ -6,30 +6,156 @@ $products = get_products();
 $boxes = json_decode(file_get_contents('json/boxes.json'))->boxes;
 
 // pre 5.3
-foreach ($products as $product) {
+foreach ($products as &$product) {
     $product->frequency = 0;
     $product->sendSoon = 0;
+    $product->sendSoonPercentage = 0;
+    $product->nutritionTotals = array();
+
+    foreach ($product->nutritionInfo as $info) {
+        $product->nutritionTotals[$info->id] = 0;
+    }
 }
 
-foreach ($boxes as $box) {
-    foreach ($box->products as $product) {
-        if (array_key_exists($product, $products)) {
-            $products[$product]->frequency++;
+$total_spent = 0;
+$friends_fed = array();
+$discount = 0;
+$box_cost = 3.49;
+$addresses = array();
+$days_of_week = array();
+$box_count = 0;
+$free_boxes = 0;
+$old_products = array();
 
-            if (in_array($product, (array)$box->sendSoonProducts)) {
-                $products[$product]->sendSoon++;
+foreach ($boxes as &$box) {
+    if (!$box->sent) {
+        continue;
+    }
+
+    $date = new DateTime($box->date);
+    $addresses[] = $box->address;
+    $days_of_week[] = $date->format('l');
+
+    foreach ($box->products as $product_id) {
+        if (array_key_exists($product_id, $products)) {
+            $product = &$products[$product_id];
+            $product->frequency++;
+
+            if (in_array($product_id, (array)$box->sendSoonProducts)) {
+                $product->sendSoon++;
             }
-
+            $product->sendSoonPercentage = round(($product->sendSoon / $product->frequency) * 100);
+            foreach ($product->nutritionInfo as $info) {
+                $product->nutritionTotals[$info->id] += $info->value;
+            }
+        } else {
+            $old_products[] = $product_id;
         }
     }
+
+    $cost = $box_cost;
+    if (isset($box->discount)) {
+        if (preg_match('/free/', $box->discount)) {
+            $discount += $cost;
+            $cost = 0;
+            $free_boxes++;
+        } elseif (preg_match('/half price/', $box->discount)) {
+            $cost /= 2;
+            $discount += $cost;
+        } elseif (preg_match('/(\w+) on this box for feeding your friend \(([\w\s]+)\)/', $box->discount, $match)) {
+            $cost -= $match[0];
+            $discount += $cost;
+            $friends_fed[] = $match[2];
+        }
+    }
+
+    $total_spent += $cost;
+    $box_count++;
 }
 
 $products = array_sort($products, 'frequency', SORT_DESC);
 
-echo '<ul>';
+$calories = 0;
 foreach ($products as $product) {
-    if ($product->frequency) {
-        $send_soon_percentage = round(($product->sendSoon /$product->frequency) * 100).'%';
-        echo '<li style="float: left; width: 250px; height: 120px; font-size: 11px; font-family: helvetica; text-align: center;">'.$product->productName.'<br>had '.$product->frequency.' times, '.$send_soon_percentage.' send soon<br><img style="width: 100px; margin-top: 5px;" src="'.$product->thumb.'"></li>';
-    }
+    $calories += $product->nutritionTotals['energyKcal'];
 }
+
+$last = $boxes[0];
+$first = end($boxes);
+
+$average_cals = round($calories / $box_count, 2);
+
+$from = new DateTime($first->date);
+
+$address_counts = array_count_values($addresses);
+$days_of_week = array_count_values($days_of_week);
+$old_products = array_count_values($old_products);
+
+arsort($address_counts);
+arsort($days_of_week);
+arsort($old_products);
+
+?>
+
+<!doctype html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        .products li {
+            float: left;
+            font-size: 12px;
+            width: 150px;
+            height: 170px;
+            position: relative;
+            list-style-type: none;
+            margin: 5px;
+            text-align: center;
+        }
+
+        .products li img {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+
+<h1><?php echo number_format($box_count) ?> boxes containing <?php echo number_format($calories) ?> calories, consumed since <?php echo $from->format('jS F Y') ?>, averaging calories <?php echo $average_cals ?> per box (that we know about!)</h1>
+<h2>Total spent: &pound;<?php echo number_format($total_spent, 2) ?></h2>
+<?php if (count($friends_fed)) : ?>
+<h2>Friends fed</h2>
+<ul>
+    <?php foreach ($friends_fed as $friend) : ?>
+    <li><?php echo $friend ?></li>
+    <?php endforeach; ?>
+</ul>
+<h2>You earnt <?php echo $free_boxes ?> free boxes and a saved a total of &pound;<?php echo number_format($discount, 2) ?>. That equates to <?php echo number_format(floor($discount / $box_cost)) ?> free boxes!</h2>
+<h2>Addresses</h2>
+<ul>
+    <?php foreach ($address_counts as $address => $count) : ?>
+    <li>Delivered to <?php echo $address ?> <?php echo $count ?> times</li>
+    <?php endforeach; ?>
+</ul>
+<h2>Days of week</h2>
+<ul>
+    <?php foreach ($days_of_week as $day => $count) : ?>
+    <li>Delivered on <?php echo $day ?> <?php echo $count ?> times</li>
+    <?php endforeach; ?>
+</ul>
+<?php endif; ?>
+<h2>You received <?php echo count($old_products) ?> different foods that are no longer available...</h2>
+<h2>Food</h2>
+<ul class="products">
+    <?php foreach ($products as $product) : if (!$product->frequency) continue; ?>
+    <li>
+        <img src="<?php echo $product->thumb ?>"><br>
+        <?php echo $product->productName ?><br>had <?php echo $product->frequency ?> times, <?php echo $product->sendSoonPercentage ?>% send soon<br><?php echo $product->nutritionTotals['energyKcal'] ?> calories consumed
+    </li>
+    <?php endforeach; ?>
+</ul>
+
+</body>
+</html>
