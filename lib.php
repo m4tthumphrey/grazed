@@ -4,9 +4,16 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'on');
 set_time_limit(0);
 
-function d($what)
+function d($what, $html = false)
 {
-    print_r($what);
+    $what = print_r($what, 1);
+
+    if ($html) {
+        echo '<pre>'.$what.'</pre>';
+        return;
+    }
+
+    echo $what;
 }
 
 function array_sort($array, $on, $order = SORT_ASC) {
@@ -26,19 +33,20 @@ function array_sort($array, $on, $order = SORT_ASC) {
     return $array;
 }
 
-function get_products($sort = 'weight', $order = SORT_DESC)
+function get_products()
 {
     $products = array();
     if ($handle = opendir('json/products/')) {
         while (false !== ($f = readdir($handle))) {
             if (preg_match('/\.json$/', $f)) {
-                $products[] = json_decode(file_get_contents('json/products/'.$f))->details;
+                $data = json_decode(file_get_contents('json/products/'.$f))->details;
+                $products[$data->productId] = $data;
             }
         }
         closedir($handle);
     }
 
-    return array_sort($products, $sort, $order);
+    return $products;
 }
 
 $product_details = 'http://www.graze.com/api/products/details?p=';
