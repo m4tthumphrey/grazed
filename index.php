@@ -119,6 +119,10 @@ arsort($old_products);
         .products li img {
             width: 100px;
         }
+
+        .clear {
+            clear: both;
+        }
     </style>
 </head>
 <body>
@@ -132,7 +136,7 @@ arsort($old_products);
     <li><?php echo $friend ?></li>
     <?php endforeach; ?>
 </ul>
-<h2>You earnt <?php echo $free_boxes ?> free boxes and a saved a total of &pound;<?php echo number_format($discount, 2) ?>. That equates to <?php echo number_format(floor($discount / $box_cost)) ?> free boxes!</h2>
+<h2>You earnt <?php echo $free_boxes ?> free boxes and a saved a total of &pound;<?php echo number_format($discount, 2) ?>. That equates to about <?php echo number_format(floor($discount / $box_cost)) ?> free boxes overall!</h2>
 <h2>Addresses</h2>
 <ul>
     <?php foreach ($address_counts as $address => $count) : ?>
@@ -146,7 +150,6 @@ arsort($old_products);
     <?php endforeach; ?>
 </ul>
 <?php endif; ?>
-<h2>You received <?php echo count($old_products) ?> different foods that are no longer available...</h2>
 <h2>Food</h2>
 <ul class="products">
     <?php foreach ($products as $product) : if (!$product->frequency) continue; ?>
@@ -156,6 +159,8 @@ arsort($old_products);
     </li>
     <?php endforeach; ?>
 </ul>
+<div class="clear"></div>
+<h2>You received <?php echo count($old_products) ?> different foods that are no longer available...</h2>
 
 </body>
 </html>
