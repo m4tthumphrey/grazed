@@ -41,17 +41,16 @@ foreach ($boxes as &$box) {
     $days_of_week[] = $date->format('l');
 
     foreach ($box->products as $product_id) {
-        $products_received[] = $product_id;
         if (array_key_exists($product_id, $products)) {
-            $product = &$products[$product_id];
-            $product->frequency++;
+            $products_received[] = $product_id;
+            $products[$product_id]->frequency++;
 
             if (in_array($product_id, (array)$box->sendSoonProducts)) {
-                $product->sendSoon++;
+                $products[$product_id]->sendSoon++;
             }
-            $product->sendSoonPercentage = round(($product->sendSoon / $product->frequency) * 100);
-            foreach ($product->nutritionInfo as $info) {
-                $product->nutritionTotals[$info->id] += $info->value;
+            $products[$product_id]->sendSoonPercentage = round(($products[$product_id]->sendSoon / $products[$product_id]->frequency) * 100);
+            foreach ($products[$product_id]->nutritionInfo as $info) {
+                $products[$product_id]->nutritionTotals[$info->id] += $info->value;
             }
         } else {
             $old_products[] = $product_id;
@@ -142,9 +141,11 @@ arsort($old_products);
 
 <h1><?php echo number_format($box_count) ?> boxes containing <?php echo number_format($calories) ?> calories, consumed since <?php echo $from->format('jS F Y') ?>, averaging calories <?php echo $average_cals ?> per box (that we know about!)</h1>
 <h2>Total spent: &pound;<?php echo number_format($total_spent, 2) ?></h2>
+<?php if (count($unsent_boxes) > 0) : ?>
 <h2><?php echo count($unsent_boxes) ?> boxes couldn't be sent for whatever reason...</h2>
+<?php endif; ?>
 <?php if (count($friends_fed)) : ?>
-<h2>Friends fed</h2>
+<h2><?php echo count($friends_fed) ?> friends fed</h2>
 <ul>
     <?php foreach ($friends_fed as $friend) : ?>
     <li><?php echo $friend ?></li>
