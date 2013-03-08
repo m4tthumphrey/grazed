@@ -27,6 +27,7 @@ $hash = null;
 foreach ($headers['Set-Cookie'] as $header) {
     if (preg_match('/auth_autologin=(\w{32})/', $header, $match)) {
         $hash = $match[1];
+        break;
     }
 }
 
