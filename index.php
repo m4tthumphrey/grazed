@@ -135,7 +135,7 @@ arsort($old_products);
             clear: both;
         }
     </style>
-    <script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript"></script>
+    <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js" type="text/javascript"></script>
 </head>
 <body>
@@ -175,8 +175,7 @@ arsort($old_products);
     <?php endforeach; ?>
 </ul>
 <div class="clear"></div>
-<h2>You received <?php echo count($old_products) ?> different foods that are no longer available...</h2>
-<h2>You've never received these foods!</h2>
+<h2>You received <?php echo count($old_products) ?> different foods that are no longer available and never received these foods!</h2>
 <ul class="products">
     <?php foreach ($products_not_received as $product) : ?>
     <li>
@@ -207,7 +206,7 @@ arsort($old_products);
     function init()
     {
         geocoder = new google.maps.Geocoder();
-        map = new google.maps.Map(document.getElementById("map"), {
+        map = new google.maps.Map(document.getElementById('map'), {
             center: google.maps.LatLng(-34.397, 150.644),
             mapTypeId: google.maps.MapTypeId.ROADMAP
         });
@@ -225,7 +224,9 @@ arsort($old_products);
                 var location = results[0].geometry.location;
                 var marker = new google.maps.Marker({
                     map: map,
-                    position: location
+                    position: location,
+                    animation: google.maps.Animation.DROP,
+                    title: address
                 });
 
                 latlng.push(location);
