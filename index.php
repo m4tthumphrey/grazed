@@ -28,9 +28,11 @@ $free_boxes = 0;
 $old_products = array();
 $products_received = array();
 $products_not_received = array();
+$unsent_boxes = array();
 
 foreach ($boxes as &$box) {
     if (!$box->sent) {
+        $unsent_boxes[] = $box;
         continue;
     }
 
@@ -133,13 +135,14 @@ arsort($old_products);
             clear: both;
         }
     </style>
+    <script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js" type="text/javascript"></script>
 </head>
 <body>
 
-<?php d($products, 1) ?>
-
 <h1><?php echo number_format($box_count) ?> boxes containing <?php echo number_format($calories) ?> calories, consumed since <?php echo $from->format('jS F Y') ?>, averaging calories <?php echo $average_cals ?> per box (that we know about!)</h1>
 <h2>Total spent: &pound;<?php echo number_format($total_spent, 2) ?></h2>
+<h2><?php echo count($unsent_boxes) ?> boxes couldn't be sent for whatever reason...</h2>
 <?php if (count($friends_fed)) : ?>
 <h2>Friends fed</h2>
 <ul>
@@ -154,6 +157,7 @@ arsort($old_products);
     <li>Delivered to <?php echo $address ?> <?php echo $count ?> times</li>
     <?php endforeach; ?>
 </ul>
+<div id="map" style="width:800px;height:500px"></div>
 <h2>Days of week</h2>
 <ul>
     <?php foreach ($days_of_week as $day => $count) : ?>
@@ -182,5 +186,59 @@ arsort($old_products);
     <?php endforeach; ?>
 </ul>
 <div class="clear"></div>
+<script>
+    var geocoder;
+    var map;
+    var latlng = [];
+    var x = 0;
+
+    function check() {
+        x++;
+        if (x == <?php echo count($address_counts) ?>) {
+            var latlngbounds = new google.maps.LatLngBounds();
+            for (i = 0; i < latlng.length; i++) {
+                latlngbounds.extend(latlng[i]);
+            }
+            map.setCenter(latlngbounds.getCenter());
+            map.fitBounds(latlngbounds);
+        }
+    }
+
+    function init()
+    {
+        geocoder = new google.maps.Geocoder();
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: google.maps.LatLng(-34.397, 150.644),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+
+        <?php foreach ($address_counts as $address => $count) : ?>
+        addMarker('<?php echo $address ?>');
+        <?php endforeach; ?>
+    }
+
+    function addMarker(address)
+    {
+        geocoder.geocode( { 'address': address }, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK)
+            {
+                var location = results[0].geometry.location;
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: location
+                });
+
+                latlng.push(location);
+
+                check();
+            }
+        });
+    }
+
+    $(document).ready(function() {
+
+        init();
+    });
+</script>
 </body>
 </html>
