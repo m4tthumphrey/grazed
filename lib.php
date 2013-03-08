@@ -49,6 +49,20 @@ function get_products()
     return $products;
 }
 
+function parse_headers($headers)
+{
+    $return = array();
+    foreach (explode(PHP_EOL, $headers) as $header) {
+        if (preg_match('/\:/', $header)) {
+            list ($name, $value) = explode(':', $header);
+            $return[$name][] = $value;
+        }
+    }
+
+    return $return;
+}
+
 $product_details = 'http://www.graze.com/api/products/details?p=';
 $box_contents = 'http://www.graze.com/api/box/contents?k=';
 $product_search = 'http://www.graze.com/api/products/search?q=';
+$boxes_list = 'http://www.graze.com/m/boxes/?range=0,5000';
