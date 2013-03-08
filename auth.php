@@ -1,9 +1,8 @@
 <?php
 
 require 'lib.php';
+require 'config.php';
 
-$username = '';
-$password = '';
 $login_url = sprintf('https://www.graze.com/auth/login/?email=%s&password=%s&autologin=1', $username, $password);
 
 $curl = curl_init($login_url);
