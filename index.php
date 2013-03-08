@@ -26,6 +26,8 @@ $days_of_week = array();
 $box_count = 0;
 $free_boxes = 0;
 $old_products = array();
+$products_received = array();
+$products_not_received = array();
 
 foreach ($boxes as &$box) {
     if (!$box->sent) {
@@ -37,6 +39,7 @@ foreach ($boxes as &$box) {
     $days_of_week[] = $date->format('l');
 
     foreach ($box->products as $product_id) {
+        $products_received[] = $product_id;
         if (array_key_exists($product_id, $products)) {
             $product = &$products[$product_id];
             $product->frequency++;
@@ -77,8 +80,14 @@ $products = array_sort($products, 'frequency', SORT_DESC);
 
 $calories = 0;
 foreach ($products as $product) {
-    $calories += $product->nutritionTotals['energyKcal'];
+    if (in_array($product->productId, $products_received)) {
+        $calories += $product->nutritionTotals['energyKcal'];
+    } else {
+        $products_not_received[] = $product;
+    }
 }
+
+$products_not_received = array_sort($products_not_received, 'weight', SORT_DESC);
 
 $last = $boxes[0];
 $first = end($boxes);
@@ -127,6 +136,8 @@ arsort($old_products);
 </head>
 <body>
 
+<?php d($products, 1) ?>
+
 <h1><?php echo number_format($box_count) ?> boxes containing <?php echo number_format($calories) ?> calories, consumed since <?php echo $from->format('jS F Y') ?>, averaging calories <?php echo $average_cals ?> per box (that we know about!)</h1>
 <h2>Total spent: &pound;<?php echo number_format($total_spent, 2) ?></h2>
 <?php if (count($friends_fed)) : ?>
@@ -161,6 +172,15 @@ arsort($old_products);
 </ul>
 <div class="clear"></div>
 <h2>You received <?php echo count($old_products) ?> different foods that are no longer available...</h2>
-
+<h2>You've never received these foods!</h2>
+<ul class="products">
+    <?php foreach ($products_not_received as $product) : ?>
+    <li>
+        <img src="<?php echo $product->thumb ?>"><br>
+        <?php echo $product->productName ?>
+    </li>
+    <?php endforeach; ?>
+</ul>
+<div class="clear"></div>
 </body>
 </html>
