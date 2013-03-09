@@ -176,7 +176,7 @@ arsort($old_products);
     <?php endforeach; ?>
 </ul>
 <div class="clear"></div>
-<h2>You received <?php echo count($old_products) ?> different foods that are no longer available and never received these foods!</h2>
+<h2>You received <?php echo count($old_products) ?> different foods that are no longer available and you never received these foods!</h2>
 <ul class="products">
     <?php foreach ($products_not_received as $product) : ?>
     <li>
