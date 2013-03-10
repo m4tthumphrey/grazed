@@ -220,8 +220,7 @@ arsort($old_products);
     function addMarker(address)
     {
         geocoder.geocode( { 'address': address }, function(results, status) {
-            if (status == google.maps.GeocoderStatus.OK)
-            {
+            if (status == google.maps.GeocoderStatus.OK) {
                 var location = results[0].geometry.location;
                 var marker = new google.maps.Marker({
                     map: map,
@@ -231,14 +230,12 @@ arsort($old_products);
                 });
 
                 latlng.push(location);
-
                 check();
             }
         });
     }
 
     $(document).ready(function() {
-
         init();
     });
 </script>
