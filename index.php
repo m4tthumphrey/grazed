@@ -139,7 +139,7 @@ arsort($old_products);
 </head>
 <body>
 
-<h1><?php echo number_format($box_count) ?> boxes containing <?php echo number_format($calories) ?> calories, consumed since <?php echo $from->format('jS F Y') ?>, averaging calories <?php echo $average_cals ?> per box (that we know about!)</h1>
+<h1><?php echo number_format($box_count) ?> boxes containing <?php echo number_format($calories) ?> calories, consumed since <?php echo $from->format('jS F Y') ?>, averaging <?php echo $average_cals ?> calories per box (that we know about!)</h1>
 <h2>Total spent: &pound;<?php echo number_format($total_spent, 2) ?></h2>
 <?php if (count($unsent_boxes) > 0) : ?>
 <h2><?php echo count($unsent_boxes) ?> boxes couldn't be sent for whatever reason...</h2>
