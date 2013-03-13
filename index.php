@@ -152,7 +152,7 @@ arsort($old_products);
     <?php endforeach; ?>
 </ul>
 <h2>You earnt <?php echo $free_boxes ?> free boxes and a saved a total of &pound;<?php echo number_format($discount, 2) ?>. That equates to about <?php echo number_format(floor($discount / $box_cost)) ?> free boxes overall!</h2>
-<h2>Addresses</h2>
+<h2>Delivered to <?php echo count($address_counts) ?> different addresses</h2>
 <ul>
     <?php foreach ($address_counts as $address => $count) : ?>
     <li>Delivered to <?php echo $address ?> <?php echo $count ?> times</li>
