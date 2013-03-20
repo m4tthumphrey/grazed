@@ -11,6 +11,7 @@ foreach ($products as &$product) {
     $product->sendSoon = 0;
     $product->sendSoonPercentage = 0;
     $product->nutritionTotals = array();
+    $product->lastSent = null;
 
     foreach ($product->nutritionInfo as $info) {
         $product->nutritionTotals[$info->id] = 0;
@@ -51,6 +52,10 @@ foreach ($boxes as &$box) {
             $products[$product_id]->sendSoonPercentage = round(($products[$product_id]->sendSoon / $products[$product_id]->frequency) * 100);
             foreach ($products[$product_id]->nutritionInfo as $info) {
                 $products[$product_id]->nutritionTotals[$info->id] += $info->value;
+            }
+
+            if (!$products[$product_id]->lastSent) {
+                $products[$product_id]->lastSent = $date;
             }
         } else {
             $old_products[] = $product_id;
@@ -171,7 +176,10 @@ arsort($old_products);
     <?php foreach ($products as $product) : if (!$product->frequency) continue; ?>
     <li>
         <img src="<?php echo $product->thumb ?>"><br>
-        <?php echo $product->productName ?><br>had <?php echo $product->frequency ?> times, <?php echo $product->sendSoonPercentage ?>% send soon<br><?php echo $product->nutritionTotals['energyKcal'] ?> calories consumed
+        <?php echo $product->productName ?><br>
+        had <?php echo $product->frequency ?> times, <?php echo $product->sendSoonPercentage ?>% send soon<br>
+        <?php echo $product->nutritionTotals['energyKcal'] ?> calories consumed<br>
+        <?php if ($product->lastSent) : ?>Last received <?php echo $product->lastSent->format('d/m/Y') ?><?php endif; ?>
     </li>
     <?php endforeach; ?>
 </ul>
