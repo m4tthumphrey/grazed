@@ -1,2 +1,4 @@
+vendor/
 *.json
 config.php
+composer.lock

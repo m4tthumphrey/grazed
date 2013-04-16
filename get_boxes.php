@@ -1,39 +1,32 @@
 <?php
 
 require 'lib.php';
+require 'config.php';
+require_once 'vendor/autoload.php';
 
-function generateKey($id)
-{
-    global $chars;
-
-    $id = intval($id);
-    $length = strlen($chars);
-    $code = '';
-
-    while ($id > $length - 1) {
-        $code = $chars[fmod($id, $length)].$code;
-        $id = floor($id / $length);
-    }
-
-    return $chars[$id].$code;
-}
-
-$chars = implode(array_merge(
-    range('A', 'Z'),
-    range(0, 9)
+$client = new Guzzle\Http\Client('https://www.graze.com', array(
+    'redirect.disable' => true // damn sob!
 ));
 
-// Maybe not!
-for ($i = 1679616; $i <= 999999999; $i++) {
-    $k = generateKey($i);
-    $box_json = file_get_contents($box_contents.$i);
-    $box_data = json_decode($box_json);
+$request = $client->get(sprintf(
+    '/auth/login?email=%s&password=%s&autologin=1', 
+    $username, 
+    $password
+));
 
-    if ($box_data->success) {
-        file_put_contents('json/boxes/'.$k.'.json', $box_json);
-    }
+$response = $client->send($request);
+$cookies = $response->getSetCookie(COOKIE_NAME);
 
-    if ($i == 1679666) {
+foreach ($cookies as $cookie) {
+    if (preg_match('/'.COOKIE_NAME.'=(\w{32})/', $cookie, $match)) {
+        $hash = $match[1];
         break;
     }
 }
+
+$request = $client->get('/m/boxes/?range=0,5000');
+$request->addCookie(COOKIE_NAME, $hash);
+
+$boxes = $request->send()->json();
+
+d($boxes);

@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'on');
 set_time_limit(0);
 
-function d($what, $html = false)
+function d($what, $html = true)
 {
     $what = print_r($what, 1);
 
@@ -61,6 +61,8 @@ function parse_headers($headers)
 
     return $return;
 }
+
+define('COOKIE_NAME', 'auth_autologin');
 
 $product_details = 'http://www.graze.com/api/products/details?p=';
 $box_contents = 'http://www.graze.com/api/box/contents?k=';
