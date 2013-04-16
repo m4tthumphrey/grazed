@@ -27,6 +27,6 @@ foreach ($cookies as $cookie) {
 $request = $client->get('/m/boxes/?range=0,5000');
 $request->addCookie(COOKIE_NAME, $hash);
 
-$boxes = $request->send()->json();
+$boxes = $request->send()->getBody();
 
-d($boxes);
+file_put_contents('json/boxes.json', $boxes);
