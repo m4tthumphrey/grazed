@@ -1,8 +1,6 @@
 <?php
 
-require 'lib.php';
-require 'config.php';
-require_once 'vendor/autoload.php';
+require '../app/bootstrap.php';
 
 $client = new Guzzle\Http\Client('https://www.graze.com', array(
     'redirect.disable' => true // damn sob!
@@ -10,8 +8,8 @@ $client = new Guzzle\Http\Client('https://www.graze.com', array(
 
 $request = $client->get(sprintf(
     '/auth/login?email=%s&password=%s&autologin=1', 
-    $username, 
-    $password
+    GRAZE_EMAIL, 
+    GRAZE_PASSWORD
 ));
 
 $response = $client->send($request);
@@ -29,4 +27,4 @@ $request->addCookie(COOKIE_NAME, $hash);
 
 $boxes = $request->send()->getBody();
 
-file_put_contents('json/boxes.json', $boxes);
+file_put_contents(JSON_PATH.'/boxes.json', $boxes);

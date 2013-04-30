@@ -1,10 +1,10 @@
 <?php
 
-require 'lib.php';
+require '../app/bootstrap.php';
 
 $product_ids = array();
 foreach (array('a', 'e', 'i', 'o', 'u') as $i) {
-    $id_json = file_get_contents('json/searches/'.$i.'.json');
+    $id_json = file_get_contents(JSON_PATH.'/searches/'.$i.'.json');
     $id_data = json_decode($id_json);
 
     if ($id_data->success) {
@@ -15,6 +15,6 @@ foreach (array('a', 'e', 'i', 'o', 'u') as $i) {
 $product_ids = array_unique($product_ids);
 
 foreach ($product_ids as $id) {
-    $data = file_get_contents($product_details.$id.'.json');
-    file_put_contents('json/products/'.$id.'.json', $data);
+    $data = file_get_contents(PRORUCT_DETAILS_URL.$id.'.json');
+    file_put_contents(JSON_PATH.'/products/'.$id.'.json', $data);
 }

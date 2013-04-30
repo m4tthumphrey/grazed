@@ -5,10 +5,10 @@ Note this is just a proof of concept, coding style and standards should be ignor
 To use with your own account simply clone or fork this repo, create a file in the root called `config.php` and add the following, obviously setting your own username (email address) and password:
 
     <?php
-    $username = '<your username>';
-    $password = '<your password>';
+    define('GRAZE_EMAIL', '<your username>');
+    define('GRAZE_PASSWORD', '<your password>');
 
-Then run the following in your terminal:
+Then navigate to the `/bin` directory in your terminal and run the following:
 
     php get_product_ids.php
     php get_product_info.php

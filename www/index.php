@@ -1,9 +1,9 @@
 <?php
 
-require 'lib.php';
+require '../app/bootstrap.php';
 
 $products = get_products();
-$boxes = json_decode(file_get_contents('json/boxes.json'))->boxes;
+$boxes = json_decode(file_get_contents(JSON_PATH.'/boxes.json'))->boxes;
 
 // pre 5.3
 foreach ($products as &$product) {
