@@ -28,3 +28,4 @@ $request->addCookie(COOKIE_NAME, $hash);
 $boxes = $request->send()->getBody();
 
 file_put_contents(JSON_PATH.'/boxes.json', $boxes);
+print("Box history downloaded\n");

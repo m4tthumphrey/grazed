@@ -53,16 +53,3 @@ function get_products()
 
     return $products;
 }
-
-function parse_headers($headers)
-{
-    $return = array();
-    foreach (explode(PHP_EOL, $headers) as $header) {
-        if (preg_match('/\:/', $header)) {
-            list ($name, $value) = explode(':', $header);
-            $return[$name][] = $value;
-        }
-    }
-
-    return $return;
-}
