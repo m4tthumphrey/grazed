@@ -15,6 +15,6 @@ foreach (array('a', 'e', 'i', 'o', 'u') as $i) {
 $product_ids = array_unique($product_ids);
 
 foreach ($product_ids as $id) {
-    $data = file_get_contents(PRORUCT_DETAILS_URL.$id.'.json');
+    $data = file_get_contents(PRODUCT_DETAILS_URL.$id.'.json');
     file_put_contents(JSON_PATH.'/products/'.$id.'.json', $data);
 }
