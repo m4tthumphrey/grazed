@@ -12,13 +12,12 @@ foreach (array('a', 'e', 'i', 'o', 'u') as $i) {
     $json = json_decode($data);
 
     if ($json->success) {
-        printf("Product list beginning with %s downloaded...\n", strtoupper($i));
+        printf("Product list containing '%s' downloaded...\n", strtoupper($i));
         $product_ids = array_merge($product_ids, $json->products);
     }
 }
 
 $product_ids = array_unique($product_ids);
-$client = new Guzzle\Http\Client('http://www.graze.com');
 
 foreach ($product_ids as $id) {
     $request = $client->get('/api/products/details?p='.$id);
@@ -28,3 +27,5 @@ foreach ($product_ids as $id) {
     file_put_contents(JSON_PATH.'/products/'.$id.'.json', $data);
     printf("Product #%s details downloaded...\n", strtoupper($id));
 }
+
+printf("Complete\n");

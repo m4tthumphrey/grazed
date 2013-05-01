@@ -13,9 +13,8 @@ define('GRAZE_PASSWORD', '<your password>');
 Then navigate to the `bin/` directory in your terminal and run the following:
 
 ```shell
-php get_product_ids.php
 php get_product_info.php
 php get_boxes.php
 ```
 
-Then whenever you get a new box, simply run the last command again. Run index.php in your web browser and you should see your stats. Play around with index.php to change what and how data is displayed.
+Then whenever you get a new box, simply run the last command again. Run index.php in your web browser and you should see your stats. You should run the first command every now and again to make sure you have the latest product information. Play around with index.php to change what and how data is displayed.
