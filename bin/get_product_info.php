@@ -2,12 +2,17 @@
 
 require '../app/bootstrap.php';
 
+$client = new Guzzle\Http\Client('http://www.graze.com');
 $product_ids = array();
+
 foreach (array('a', 'e', 'i', 'o', 'u') as $i) {
-    $data = file_get_contents(JSON_PATH.'/searches/'.$i.'.json');
+    $request = $client->get('/api/products/search?q='.$i);
+    $response = $client->send($request);
+    $data = $response->getBody();
     $json = json_decode($data);
 
     if ($json->success) {
+        printf("Product list beginning with %s downloaded...\n", strtoupper($i));
         $product_ids = array_merge($product_ids, $json->products);
     }
 }
