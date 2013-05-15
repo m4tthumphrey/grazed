@@ -10,6 +10,12 @@ define('GRAZE_EMAIL', '<your username>');
 define('GRAZE_PASSWORD', '<your password>');
 ```
 
+I use [Composer](http://getcomposer.org) to manage the following dependencies:
+
+* [Guzzle](http://github.com/guzzle/guzzle)
+
+Run `composer install` in the project root to install them.
+
 Then navigate to the `bin/` directory in your terminal and run the following:
 
 ```shell
