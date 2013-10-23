@@ -1,6 +1,6 @@
 <?php
 
-define('APP_PATH', '/Users/matt/php/graze');
+define('APP_PATH', '/var/www/grazed');
 define('JSON_PATH', APP_PATH.'/json');
 
 define('COOKIE_NAME', 'auth_autologin');

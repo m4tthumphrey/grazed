@@ -13,7 +13,7 @@ $request = $client->get(sprintf(
 ));
 
 $response = $client->send($request);
-$cookies = $response->getSetCookie(COOKIE_NAME);
+$cookies = explode('; ', $response->getSetCookie());
 
 foreach ($cookies as $cookie) {
     if (preg_match('/'.COOKIE_NAME.'=(\w{32})/', $cookie, $match)) {
